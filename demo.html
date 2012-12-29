@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <title>BLAKE2b-js Demo</title>
+  </head>
+  <style>
+    /* Taken from blake2.net */
+    html,body {
+      color: #000000;
+      background-color: white;
+      font-family: sans-serif;
+    }
+    h1 {
+      font-size:275%;
+    }
+    a:link {color:#aa0000; text-decoration:none;}
+    a:visited {color:#aa0000; text-decoration:none;}
+    a:hover {color:#dd0000; text-decoration:none}
+
+    #digest { font-family: monospace; }
+  </style>    
+  <script src="blake2s.js"></script>
+  <body>
+    <h1>BLAKE2s in JavaScript</h1>
+
+    <p>Input:<br>
+    <textarea id=input cols=80 rows=10>Enter text and press the button.</textarea><br>
+    Digest length: <input id=digest-length type=number min=1 max=32 value=32>
+    <p><button onclick="calculateDigest()">Digest &rarr;</button> <span id=digest></span>
+
+    <p><a href="https://github.com/dchest/blake2s-js">Source code</a>
+
+    <script>
+      function calculateDigest() {
+        var msg = document.getElementById('input').value;
+        var length = document.getElementById('digest-length').value;
+        try {
+          var h = new BLAKE2s(length);
+        } catch (e) {
+          alert("Error: " + e);
+        }
+        h.update(msg);
+        document.getElementById('digest').innerText = h.hexDigest();
+      }
+    </script>
+</body>
+</html>
