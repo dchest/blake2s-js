@@ -1244,13 +1244,13 @@ class BLAKE2s {
         this.h[7] ^= v7 ^ v15;
     }
 
-    private stringToUtf8Array(s : string) {
+    private stringToUtf8Array(s : string) : number[] {
         var arr = [];
         for (var i = 0; i < s.length; i++)  {
             var c = s.charCodeAt(i);
             if (c < 128) {
                 arr.push(c);
-            } else if (c > 191 && c < 2048) {
+            } else if (c > 127 && c < 2048) {
                 arr.push((c>>6) | 192);
                 arr.push((c & 63) | 128);
             } else {
@@ -1267,7 +1267,14 @@ class BLAKE2s {
             throw 'update() after calling digest()';
         }
         if (typeof p == 'string') {
+            if (offset != 0) {
+                throw 'offset not supported for strings';
+            }
             p = this.stringToUtf8Array(p);
+            length = p.length;
+            offset = 0;
+        } else if (typeof p != 'object') {
+            throw 'unsupported object: string or array required';
         }
         var left = 64 - this.nx;
         if (length > left) {
