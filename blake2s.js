@@ -1262,6 +1262,7 @@ var BLAKE2s = (function () {
             out[i * 4 + 3] = (h >>> 24) & 255;
         }
         this.result = out.slice(0, this.digestLength);
+        this.isFinished = true;
         return this.result;
     };
     BLAKE2s.prototype.hexDigest = function () {

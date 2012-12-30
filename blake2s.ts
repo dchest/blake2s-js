@@ -1325,6 +1325,7 @@ class BLAKE2s {
             out[i*4+3] = (h>>>24) & 0xff;
         }
         this.result = out.slice(0, this.digestLength);
+        this.isFinished = true;
         return this.result;
     }
 
