@@ -7,9 +7,9 @@ Currently doesn't support keying or tree mode.
 USAGE
 
   var h = new BLAKE2s(32); // constructor accepts digest length in bytes
-  h.update("string or table of bytes"); 
+  h.update("string or array of bytes");
   h.hexDigest(); 	   // returns string with hex digest
-  h.digest();              // returns table of bytes
+  h.digest();              // returns array of bytes
 
 
 DEMO
