@@ -2,7 +2,7 @@ BLAKE2s implementation in TypeScript / JavaScript.
 
 https://blake2.net
 
-Currently doesn't support keying or tree mode.
+Currently doesn't support tree mode.
 
 USAGE
 
@@ -10,6 +10,10 @@ USAGE
   h.update("string or array of bytes");
   h.hexDigest(); 	   // returns string with hex digest
   h.digest();              // returns array of bytes
+
+  // Keyed:
+  var h = new BLAKE2s(32, "some key");
+  ...
 
 
 DEMO

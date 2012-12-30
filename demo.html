@@ -26,6 +26,7 @@
     <p>Input:<br>
     <textarea id=input cols=80 rows=10>Enter text and press the button.</textarea><br>
     Digest length: <input id=digest-length type=number min=1 max=32 value=32>
+    Key: <input id=key size=32>
     <p><button onclick="calculateDigest()">Digest &rarr;</button> <span id=digest></span>
 
     <p><a href="https://github.com/dchest/blake2s-js">Source code</a>
@@ -33,11 +34,12 @@
     <script>
       function calculateDigest() {
         var msg = document.getElementById('input').value;
+        var length = document.getElementById('digest-length').value;
+        var key = document.getElementById('key').value;
         // Unix line breaks.
         msg = msg.replace(/\r\n/g, '\n');
-        var length = document.getElementById('digest-length').value;
         try {
-          var h = new BLAKE2s(length);
+          var h = new BLAKE2s(length, key);
         } catch (e) {
           alert("Error: " + e);
         }

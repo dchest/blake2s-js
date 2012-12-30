@@ -1,5 +1,5 @@
 var BLAKE2s = (function () {
-    function BLAKE2s(digestLength) {
+    function BLAKE2s(digestLength, key) {
         if (typeof digestLength === "undefined") { digestLength = 32; }
         this.isFinished = false;
         this.digestLength = 32;
@@ -21,9 +21,21 @@ var BLAKE2s = (function () {
                 throw 'digestLength is too large';
             }
         }
+        var keyLength = 0;
+        if(typeof key == 'string') {
+            key = this.stringToUtf8Array(key);
+            keyLength = key.length;
+        } else {
+            if(typeof key == 'object') {
+                keyLength = key.length;
+            }
+        }
+        if(keyLength > 32) {
+            throw 'key too long';
+        }
         var param = [
             digestLength & 255, 
-            0, 
+            keyLength, 
             1, 
             1
         ];
@@ -36,6 +48,15 @@ var BLAKE2s = (function () {
         this.f1 = 0;
         this.nx = 0;
         this.digestLength = digestLength;
+        if(keyLength > 0) {
+            for(var i = 0; i < keyLength; i++) {
+                this.x[i] = key[i];
+            }
+            for(var i = keyLength; i < 64; i++) {
+                this.x[i] = 0;
+            }
+            this.nx = 64;
+        }
     }
     BLAKE2s.prototype.load32 = function (p, pos) {
         return ((p[pos] & 255) | ((p[pos + 1] & 255) << 8) | ((p[pos + 2] & 255) << 16) | ((p[pos + 3] & 255) << 24)) >>> 0;
@@ -47,7 +68,7 @@ var BLAKE2s = (function () {
         p[pos + 3] = (v >>> 24) & 255;
     };
     BLAKE2s.prototype.processBlock = function (length) {
-        this.t0 = (this.t0 + length) | 0;
+        this.t0 += length;
         if(this.t0 != this.t0 >>> 0) {
             this.t0 = 0;
             this.t1++;
@@ -1219,6 +1240,9 @@ var BLAKE2s = (function () {
             if(typeof p != 'object') {
                 throw 'unsupported object: string or array required';
             }
+        }
+        if(length == 0) {
+            return;
         }
         var left = 64 - this.nx;
         if(length > left) {

@@ -31,17 +31,28 @@ class BLAKE2s {
         p[pos+3] = (v>>>24) & 0xff;
     }
 
-    constructor(digestLength : number = 32) {
-        //TODO keyed and tree modes.
+    constructor(digestLength : number = 32, key? : any) {
+        //TODO tree mode.
         if (digestLength <= 0) {
             digestLength = this.digestLength;
         } else if (digestLength > 32) {
             throw 'digestLength is too large';
         }
-        var param = [digestLength & 0xff, 0, 1, 1];
+        var keyLength = 0;
+        if (typeof key == 'string') {
+            key = this.stringToUtf8Array(key);
+            keyLength = key.length;
+        } else if (typeof key == 'object') {
+            keyLength = key.length;
+        }
+        if (keyLength > 32) {
+            throw 'key too long';
+        }
+
+        var param = [digestLength & 0xff, keyLength, 1, 1];
         this.h = this.iv.slice(0);
 
-        // XOR parameters block.
+        // XOR part of parameter block.
         this.h[0] ^= this.load32(param, 0);
 
         this.x = new Array(64);
@@ -51,10 +62,20 @@ class BLAKE2s {
         this.f1 = 0;
         this.nx = 0;
         this.digestLength = digestLength;
+
+        if (keyLength > 0) {
+            for (var i = 0; i < keyLength; i++) {
+                this.x[i] = key[i];
+            }
+            for (var i = keyLength; i < 64; i++) {
+                this.x[i] = 0;
+            }
+            this.nx = 64;
+        }
     }
 
     private processBlock(length : number) {
-        this.t0 = (this.t0 + length) | 0;
+        this.t0 += length;
         if (this.t0 != this.t0>>>0) { 
             this.t0 = 0;
             this.t1++;
@@ -1275,6 +1296,9 @@ class BLAKE2s {
             offset = 0;
         } else if (typeof p != 'object') {
             throw 'unsupported object: string or array required';
+        }
+        if (length == 0) {
+            return;
         }
         var left = 64 - this.nx;
         if (length > left) {
