@@ -16,19 +16,15 @@ var BLAKE2s = (function () {
         ];
         if(digestLength <= 0) {
             digestLength = this.digestLength;
-        } else {
-            if(digestLength > 32) {
-                throw 'digestLength is too large';
-            }
+        } else if(digestLength > 32) {
+            throw 'digestLength is too large';
         }
         var keyLength = 0;
         if(typeof key == 'string') {
             key = this.stringToUtf8Array(key);
             keyLength = key.length;
-        } else {
-            if(typeof key == 'object') {
-                keyLength = key.length;
-            }
+        } else if(typeof key == 'object') {
+            keyLength = key.length;
         }
         if(keyLength > 32) {
             throw 'key too long';
@@ -1210,15 +1206,13 @@ var BLAKE2s = (function () {
             var c = s.charCodeAt(i);
             if(c < 128) {
                 arr.push(c);
+            } else if(c > 127 && c < 2048) {
+                arr.push((c >> 6) | 192);
+                arr.push((c & 63) | 128);
             } else {
-                if(c > 127 && c < 2048) {
-                    arr.push((c >> 6) | 192);
-                    arr.push((c & 63) | 128);
-                } else {
-                    arr.push((c >> 12) | 224);
-                    arr.push(((c >> 6) & 63) | 128);
-                    arr.push((c & 64) | 128);
-                }
+                arr.push((c >> 12) | 224);
+                arr.push(((c >> 6) & 63) | 128);
+                arr.push((c & 64) | 128);
             }
         }
         return arr;
@@ -1236,10 +1230,8 @@ var BLAKE2s = (function () {
             p = this.stringToUtf8Array(p);
             length = p.length;
             offset = 0;
-        } else {
-            if(typeof p != 'object') {
-                throw 'unsupported object: string or array required';
-            }
+        } else if(typeof p != 'object') {
+            throw 'unsupported object: string or array required';
         }
         if(length == 0) {
             return;
