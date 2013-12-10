@@ -5,38 +5,32 @@ var BLAKE2s = (function () {
         this.digestLength = 32;
         this.blockLength = 64;
         this.iv = [
-            1779033703, 
-            3144134277, 
-            1013904242, 
-            2773480762, 
-            1359893119, 
-            2600822924, 
-            528734635, 
-            1541459225
+            0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+            0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
         ];
-        if(digestLength <= 0) {
+        //TODO tree mode.
+        if (digestLength <= 0) {
             digestLength = this.digestLength;
-        } else if(digestLength > 32) {
+        } else if (digestLength > 32) {
             throw 'digestLength is too large';
         }
         var keyLength = 0;
-        if(typeof key == 'string') {
+        if (typeof key == 'string') {
             key = this.stringToUtf8Array(key);
             keyLength = key.length;
-        } else if(typeof key == 'object') {
+        } else if (typeof key == 'object') {
             keyLength = key.length;
         }
-        if(keyLength > 32) {
+        if (keyLength > 32) {
             throw 'key too long';
         }
-        var param = [
-            digestLength & 255, 
-            keyLength, 
-            1, 
-            1
-        ];
+
+        var param = [digestLength & 0xff, keyLength, 1, 1];
         this.h = this.iv.slice(0);
+
+        // XOR part of parameter block.
         this.h[0] ^= this.load32(param, 0);
+
         this.x = new Array(64);
         this.t0 = 0;
         this.t1 = 0;
@@ -44,33 +38,40 @@ var BLAKE2s = (function () {
         this.f1 = 0;
         this.nx = 0;
         this.digestLength = digestLength;
-        if(keyLength > 0) {
-            for(var i = 0; i < keyLength; i++) {
+
+        if (keyLength > 0) {
+            for (var i = 0; i < keyLength; i++) {
                 this.x[i] = key[i];
             }
-            for(var i = keyLength; i < 64; i++) {
+            for (var i = keyLength; i < 64; i++) {
                 this.x[i] = 0;
             }
             this.nx = 64;
         }
     }
     BLAKE2s.prototype.load32 = function (p, pos) {
-        return ((p[pos] & 255) | ((p[pos + 1] & 255) << 8) | ((p[pos + 2] & 255) << 16) | ((p[pos + 3] & 255) << 24)) >>> 0;
+        return ((p[pos] & 0xff) | ((p[pos + 1] & 0xff) << 8) | ((p[pos + 2] & 0xff) << 16) | ((p[pos + 3] & 0xff) << 24)) >>> 0;
     };
+
     BLAKE2s.prototype.store32 = function (p, pos, v) {
-        p[pos] = (v >>> 0) & 255;
-        p[pos + 1] = (v >>> 8) & 255;
-        p[pos + 2] = (v >>> 16) & 255;
-        p[pos + 3] = (v >>> 24) & 255;
+        p[pos] = (v >>> 0) & 0xff;
+        p[pos + 1] = (v >>> 8) & 0xff;
+        p[pos + 2] = (v >>> 16) & 0xff;
+        p[pos + 3] = (v >>> 24) & 0xff;
     };
+
     BLAKE2s.prototype.processBlock = function (length) {
         this.t0 += length;
-        if(this.t0 != this.t0 >>> 0) {
+        if (this.t0 != this.t0 >>> 0) {
             this.t0 = 0;
             this.t1++;
         }
+
         var v0 = this.h[0], v1 = this.h[1], v2 = this.h[2], v3 = this.h[3], v4 = this.h[4], v5 = this.h[5], v6 = this.h[6], v7 = this.h[7], v8 = this.iv[0], v9 = this.iv[1], v10 = this.iv[2], v11 = this.iv[3], v12 = this.iv[4] ^ this.t0, v13 = this.iv[5] ^ this.t1, v14 = this.iv[6] ^ this.f0, v15 = this.iv[7] ^ this.f1;
+
         var m0 = this.load32(this.x, 0), m1 = this.load32(this.x, 4), m2 = this.load32(this.x, 8), m3 = this.load32(this.x, 12), m4 = this.load32(this.x, 16), m5 = this.load32(this.x, 20), m6 = this.load32(this.x, 24), m7 = this.load32(this.x, 28), m8 = this.load32(this.x, 32), m9 = this.load32(this.x, 36), m10 = this.load32(this.x, 40), m11 = this.load32(this.x, 44), m12 = this.load32(this.x, 48), m13 = this.load32(this.x, 52), m14 = this.load32(this.x, 56), m15 = this.load32(this.x, 60);
+
+        // Round 1.
         v0 += m0;
         v0 += v4;
         v12 ^= v0;
@@ -183,6 +184,8 @@ var BLAKE2s = (function () {
         v10 += v15;
         v5 ^= v10;
         v5 = v5 << (32 - 7) | v5 >>> 7;
+
+        // Round 2.
         v0 += m14;
         v0 += v4;
         v12 ^= v0;
@@ -295,6 +298,8 @@ var BLAKE2s = (function () {
         v10 += v15;
         v5 ^= v10;
         v5 = v5 << (32 - 7) | v5 >>> 7;
+
+        // Round 3.
         v0 += m11;
         v0 += v4;
         v12 ^= v0;
@@ -407,6 +412,8 @@ var BLAKE2s = (function () {
         v10 += v15;
         v5 ^= v10;
         v5 = v5 << (32 - 7) | v5 >>> 7;
+
+        // Round 4.
         v0 += m7;
         v0 += v4;
         v12 ^= v0;
@@ -519,6 +526,8 @@ var BLAKE2s = (function () {
         v10 += v15;
         v5 ^= v10;
         v5 = v5 << (32 - 7) | v5 >>> 7;
+
+        // Round 5.
         v0 += m9;
         v0 += v4;
         v12 ^= v0;
@@ -631,6 +640,8 @@ var BLAKE2s = (function () {
         v10 += v15;
         v5 ^= v10;
         v5 = v5 << (32 - 7) | v5 >>> 7;
+
+        // Round 6.
         v0 += m2;
         v0 += v4;
         v12 ^= v0;
@@ -743,6 +754,8 @@ var BLAKE2s = (function () {
         v10 += v15;
         v5 ^= v10;
         v5 = v5 << (32 - 7) | v5 >>> 7;
+
+        // Round 7.
         v0 += m12;
         v0 += v4;
         v12 ^= v0;
@@ -855,6 +868,8 @@ var BLAKE2s = (function () {
         v10 += v15;
         v5 ^= v10;
         v5 = v5 << (32 - 7) | v5 >>> 7;
+
+        // Round 8.
         v0 += m13;
         v0 += v4;
         v12 ^= v0;
@@ -967,6 +982,8 @@ var BLAKE2s = (function () {
         v10 += v15;
         v5 ^= v10;
         v5 = v5 << (32 - 7) | v5 >>> 7;
+
+        // Round 9.
         v0 += m6;
         v0 += v4;
         v12 ^= v0;
@@ -1079,6 +1096,8 @@ var BLAKE2s = (function () {
         v10 += v15;
         v5 ^= v10;
         v5 = v5 << (32 - 7) | v5 >>> 7;
+
+        // Round 10.
         v0 += m10;
         v0 += v4;
         v12 ^= v0;
@@ -1191,6 +1210,7 @@ var BLAKE2s = (function () {
         v10 += v15;
         v5 ^= v10;
         v5 = (v5 << (32 - 7)) | (v5 >>> 7);
+
         this.h[0] ^= v0 ^ v8;
         this.h[1] ^= v1 ^ v9;
         this.h[2] ^= v2 ^ v10;
@@ -1200,13 +1220,14 @@ var BLAKE2s = (function () {
         this.h[6] ^= v6 ^ v14;
         this.h[7] ^= v7 ^ v15;
     };
+
     BLAKE2s.prototype.stringToUtf8Array = function (s) {
         var arr = [];
-        for(var i = 0; i < s.length; i++) {
+        for (var i = 0; i < s.length; i++) {
             var c = s.charCodeAt(i);
-            if(c < 128) {
+            if (c < 128) {
                 arr.push(c);
-            } else if(c > 127 && c < 2048) {
+            } else if (c > 127 && c < 2048) {
                 arr.push((c >> 6) | 192);
                 arr.push((c & 63) | 128);
             } else {
@@ -1217,28 +1238,29 @@ var BLAKE2s = (function () {
         }
         return arr;
     };
+
     BLAKE2s.prototype.update = function (p, offset, length) {
         if (typeof offset === "undefined") { offset = 0; }
         if (typeof length === "undefined") { length = p.length; }
-        if(this.isFinished) {
+        if (this.isFinished) {
             throw 'update() after calling digest()';
         }
-        if(typeof p == 'string') {
-            if(offset != 0) {
+        if (typeof p == 'string') {
+            if (offset != 0) {
                 throw 'offset not supported for strings';
             }
             p = this.stringToUtf8Array(p);
             length = p.length;
             offset = 0;
-        } else if(typeof p != 'object') {
+        } else if (typeof p != 'object') {
             throw 'unsupported object: string or array required';
         }
-        if(length == 0) {
+        if (length == 0) {
             return;
         }
         var left = 64 - this.nx;
-        if(length > left) {
-            for(var i = 0; i < left; i++) {
+        if (length > left) {
+            for (var i = 0; i < left; i++) {
                 this.x[this.nx + i] = p[offset + i];
             }
             this.processBlock(64);
@@ -1246,8 +1268,8 @@ var BLAKE2s = (function () {
             length -= left;
             this.nx = 0;
         }
-        while(length > 64) {
-            for(var i = 0; i < 64; i++) {
+        while (length > 64) {
+            for (var i = 0; i < 64; i++) {
                 this.x[i] = p[offset + i];
             }
             this.processBlock(64);
@@ -1255,56 +1277,47 @@ var BLAKE2s = (function () {
             length -= 64;
             this.nx = 0;
         }
-        for(var i = 0; i < length; i++) {
+        for (var i = 0; i < length; i++) {
             this.x[this.nx + i] = p[offset + i];
         }
         this.nx = length;
     };
+
     BLAKE2s.prototype.digest = function () {
-        if(this.isFinished) {
+        if (this.isFinished) {
             return this.result;
         }
-        for(var i = this.nx; i < 64; i++) {
+
+        for (var i = this.nx; i < 64; i++) {
             this.x[i] = 0;
         }
-        this.f0 = 4294967295;
+
+        // Set last block flag.
+        this.f0 = 0xffffffff;
+
+        //TODO in tree mode, set f1 to 0xffffffff.
         this.processBlock(this.nx);
+
         var out = new Array(32);
-        for(var i = 0; i < 8; i++) {
+        for (var i = 0; i < 8; i++) {
             var h = this.h[i];
-            out[i * 4 + 0] = (h >>> 0) & 255;
-            out[i * 4 + 1] = (h >>> 8) & 255;
-            out[i * 4 + 2] = (h >>> 16) & 255;
-            out[i * 4 + 3] = (h >>> 24) & 255;
+            out[i * 4 + 0] = (h >>> 0) & 0xff;
+            out[i * 4 + 1] = (h >>> 8) & 0xff;
+            out[i * 4 + 2] = (h >>> 16) & 0xff;
+            out[i * 4 + 3] = (h >>> 24) & 0xff;
         }
         this.result = out.slice(0, this.digestLength);
         this.isFinished = true;
         return this.result;
     };
+
     BLAKE2s.prototype.hexDigest = function () {
-        var hex = [
-            '0', 
-            '1', 
-            '2', 
-            '3', 
-            '4', 
-            '5', 
-            '6', 
-            '7', 
-            '8', 
-            '9', 
-            'a', 
-            'b', 
-            'c', 
-            'd', 
-            'e', 
-            'f'
-        ];
+        var hex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
         var out = [];
         var d = this.digest();
-        for(var i = 0; i < d.length; i++) {
-            out.push(hex[(d[i] >> 4) & 15]);
-            out.push(hex[d[i] & 15]);
+        for (var i = 0; i < d.length; i++) {
+            out.push(hex[(d[i] >> 4) & 0xf]);
+            out.push(hex[d[i] & 0xf]);
         }
         return out.join('');
     };
