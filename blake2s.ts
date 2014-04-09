@@ -1323,7 +1323,7 @@ class BLAKE2s {
         for (var i = 0; i < length; i++) {
             this.x[this.nx+i] = p[offset+i];
         }
-        this.nx = length;
+        this.nx += length;
     }
 
     digest() : number[] {

@@ -560,6 +560,28 @@ for (i = 0; i < 256; i++) {
     }
 }
 
+// short inputs
+console.log("Testing short inputs...");
+for (i = 2; i < 128; i++) {
+  var arr = [];
+  for (var j = 0; j < i; j++) arr.push(j);
+  var h0 = new BLAKE2s();
+  h0.update(arr);
+  var good = h0.hexDigest();
+
+  var h1 = new BLAKE2s();
+  h1.update(arr, 0, Math.floor(i/2));
+  h1.update(arr, Math.floor(i/2), Math.ceil(i/2));
+  var cand = h1.hexDigest();
+
+  if (good != cand) {
+    console.log('fail #', i, '\n', 'have', cand, '\n', 'need', good);
+    fails++;
+  } else {
+    passes++;
+  }
+}
+
 if (fails == 0) {
     console.log('PASS');
 } else {
