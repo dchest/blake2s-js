@@ -565,3 +565,35 @@ if (fails == 0) {
 } else {
     console.log('FAIL', fails, 'of', fails+passes);
 }
+
+// Benchmark.
+(function() {
+  var i;
+  var buf = [];
+  for (i = 0; i < 1024; i++) {
+    buf.push(i & 0xff);
+  }
+  var h = new BLAKE2s(32);
+  var startTime = new Date();
+  for (i = 0; i < 1024; i++) {
+    h.update(buf);
+  }
+  var duration = (new Date()) - startTime;
+  console.log('BLAKE2s\t', duration +  ' ms\t|\t', 1/(duration/1000) + ' MB/s');
+})();
+
+(function() {
+  var crypto = require('crypto');
+  var i;
+  var buf = new Buffer(1024);
+  for (i = 0; i < 1024; i++) {
+    buf[i] = (i & 0xff);
+  }
+  var h = crypto.createHash('sha1');
+  var startTime = new Date();
+  for (i = 0; i < 1024; i++) {
+    h.update(buf);
+  }
+  var duration = (new Date()) - startTime;
+  console.log('SHA-1\t', duration +  ' ms\t|\t', 1/(duration/1000) + ' MB/s');
+})();
