@@ -20,6 +20,11 @@ DEMO
 
   http://www.dchest.org/blake2s-js/
 
+INSTALL
+
+  Download the script from https://github.com/dchest/blake2s-js/blob/master/blake2s.js
+
+  Or `npm install git+https://git@github.com/dchest/blake2s-js.git`
 
 PUBLIC DOMAIN DEDICATION
 

@@ -1,0 +1,15 @@
+{
+  "name": "BLAKE2s",
+  "version": "0.0.0",
+  "description": "BLAKE2s cryptographic hash function in JavaScript & TypeScript",
+  "main": "blake2s.js",
+  "scripts": {
+    "test": "node test.js && open test.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://git@github.com/dchest/blake2s-js.git"
+  },
+  "author": "Dmitry Chestnykh",
+  "license": "Public Domain"
+}
