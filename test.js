@@ -1,5 +1,5 @@
 // Run: node test.js
-eval(require('fs').readFileSync('blake2s.js')+'');
+var BLAKE2s = typeof require !== 'undefined' ? require('./blake2s.js') : window.BLAKE2s;
 
 var golden = [
 	"69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9",
@@ -605,6 +605,7 @@ if (fails == 0) {
 })();
 
 (function() {
+  if (typeof require === 'undefined') return;
   var crypto = require('crypto');
   var i;
   var buf = new Buffer(1024);

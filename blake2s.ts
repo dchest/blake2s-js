@@ -20,17 +20,6 @@ class BLAKE2s {
         0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
     ];
 
-    private load32(p : number[], pos : number) : number {
-        return ((p[pos] & 0xff) | ((p[pos+1]&0xff)<<8) | ((p[pos+2]&0xff)<<16) | ((p[pos+3]&0xff)<<24))>>>0;
-    }
-
-    private store32(p : number[], pos : number, v : number) {
-        p[pos] = (v>>>0) & 0xff;
-        p[pos+1] = (v>>>8) & 0xff;
-        p[pos+2] = (v>>>16) & 0xff;
-        p[pos+3] = (v>>>24) & 0xff;
-    }
-
     constructor(digestLength : number = 32, key? : any) {
         //TODO tree mode.
         if (digestLength <= 0) {
@@ -53,7 +42,8 @@ class BLAKE2s {
         this.h = this.iv.slice(0);
 
         // XOR part of parameter block.
-        this.h[0] ^= this.load32(param, 0);
+        this.h[0] ^= param[ 0] & 0xff | (param[ 1] & 0xff)<<8 |
+                    (param[ 2] & 0xff)<<16 | (param[ 3] & 0xff)<<24;
 
         this.x = new Array(64);
         this.t0 = 0;
@@ -67,7 +57,7 @@ class BLAKE2s {
             for (var i = 0; i < keyLength; i++) {
                 this.x[i] = key[i];
             }
-            for (var i = keyLength; i < 64; i++) {
+            for (i = keyLength; i < 64; i++) {
                 this.x[i] = 0;
             }
             this.nx = 64;
@@ -98,22 +88,23 @@ class BLAKE2s {
             v14 = this.iv[6] ^ this.f0,
             v15 = this.iv[7] ^ this.f1;
 
-        var m0 = this.load32(this.x, 0),
-            m1 = this.load32(this.x, 4),
-            m2 = this.load32(this.x, 8),
-            m3 = this.load32(this.x, 12),
-            m4 = this.load32(this.x, 16),
-            m5 = this.load32(this.x, 20),
-            m6 = this.load32(this.x, 24),
-            m7 = this.load32(this.x, 28),
-            m8 = this.load32(this.x, 32),
-            m9 = this.load32(this.x, 36),
-            m10 = this.load32(this.x, 40),
-            m11 = this.load32(this.x, 44),
-            m12 = this.load32(this.x, 48),
-            m13 = this.load32(this.x, 52),
-            m14 = this.load32(this.x, 56),
-            m15 = this.load32(this.x, 60);
+        var x = this.x;
+        var m0  = x[ 0] & 0xff | (x[ 1] & 0xff)<<8 | (x[ 2] & 0xff)<<16 | (x[ 3] & 0xff)<<24,
+            m1  = x[ 4] & 0xff | (x[ 5] & 0xff)<<8 | (x[ 6] & 0xff)<<16 | (x[ 7] & 0xff)<<24,
+            m2  = x[ 8] & 0xff | (x[ 9] & 0xff)<<8 | (x[10] & 0xff)<<16 | (x[11] & 0xff)<<24,
+            m3  = x[12] & 0xff | (x[13] & 0xff)<<8 | (x[14] & 0xff)<<16 | (x[15] & 0xff)<<24,
+            m4  = x[16] & 0xff | (x[17] & 0xff)<<8 | (x[18] & 0xff)<<16 | (x[19] & 0xff)<<24,
+            m5  = x[20] & 0xff | (x[21] & 0xff)<<8 | (x[22] & 0xff)<<16 | (x[23] & 0xff)<<24,
+            m6  = x[24] & 0xff | (x[25] & 0xff)<<8 | (x[26] & 0xff)<<16 | (x[27] & 0xff)<<24,
+            m7  = x[28] & 0xff | (x[29] & 0xff)<<8 | (x[30] & 0xff)<<16 | (x[31] & 0xff)<<24,
+            m8  = x[32] & 0xff | (x[33] & 0xff)<<8 | (x[34] & 0xff)<<16 | (x[35] & 0xff)<<24,
+            m9  = x[36] & 0xff | (x[37] & 0xff)<<8 | (x[38] & 0xff)<<16 | (x[39] & 0xff)<<24,
+            m10 = x[40] & 0xff | (x[41] & 0xff)<<8 | (x[42] & 0xff)<<16 | (x[43] & 0xff)<<24,
+            m11 = x[44] & 0xff | (x[45] & 0xff)<<8 | (x[46] & 0xff)<<16 | (x[47] & 0xff)<<24,
+            m12 = x[48] & 0xff | (x[49] & 0xff)<<8 | (x[50] & 0xff)<<16 | (x[51] & 0xff)<<24,
+            m13 = x[52] & 0xff | (x[53] & 0xff)<<8 | (x[54] & 0xff)<<16 | (x[55] & 0xff)<<24,
+            m14 = x[56] & 0xff | (x[57] & 0xff)<<8 | (x[58] & 0xff)<<16 | (x[59] & 0xff)<<24,
+            m15 = x[60] & 0xff | (x[61] & 0xff)<<8 | (x[62] & 0xff)<<16 | (x[63] & 0xff)<<24;
 
         // Round 1.
         v0 += m0;
@@ -1284,26 +1275,27 @@ class BLAKE2s {
     }
 
     update(p : any, offset : number = 0, length : number = p.length) {
+        var i;
         if (this.isFinished) {
             throw 'update() after calling digest()';
         }
-        if (typeof p == 'string') {
-            if (offset != 0) {
+        if (typeof p === 'string') {
+            if (offset !== 0) {
                 throw 'offset not supported for strings';
             }
             p = this.stringToUtf8Array(p);
             length = p.length;
             offset = 0;
-        } else if (typeof p != 'object') {
+        } else if (typeof p !== 'object') {
             throw 'unsupported object: string or array required';
         }
-        if (length == 0) {
+        if (length === 0) {
             return;
         }
         var left = 64 - this.nx;
         if (length > left) {
             // Process buffer.
-            for (var i = 0; i < left; i++) {
+            for (i = 0; i < left; i++) {
                 this.x[this.nx+i] = p[offset+i];
             }
             this.processBlock(64);
@@ -1312,7 +1304,7 @@ class BLAKE2s {
             this.nx = 0;
         }
         while (length > 64) {
-            for (var i = 0; i < 64; i++) {
+            for (i = 0; i < 64; i++) {
                 this.x[i] = p[offset+i];
             }
             this.processBlock(64);
@@ -1320,18 +1312,19 @@ class BLAKE2s {
             length -= 64;
             this.nx = 0;
         }
-        for (var i = 0; i < length; i++) {
+        for (i = 0; i < length; i++) {
             this.x[this.nx+i] = p[offset+i];
         }
         this.nx += length;
     }
 
     digest() : number[] {
+        var i;
         if (this.isFinished) {
             return this.result;
         }
         // Pad buffer with zeros.
-        for (var i = this.nx; i < 64; i++) {
+        for (i = this.nx; i < 64; i++) {
             this.x[i] = 0;
         }
         // Set last block flag.
@@ -1341,7 +1334,7 @@ class BLAKE2s {
         this.processBlock(this.nx);
 
         var out = new Array(32);
-        for (var i = 0; i < 8; i++) {
+        for (i = 0; i < 8; i++) {
             var h = this.h[i];
             out[i*4+0] = (h>>>0) & 0xff;
             out[i*4+1] = (h>>>8) & 0xff;
