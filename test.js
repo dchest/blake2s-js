@@ -546,9 +546,9 @@ for (i = 0; i < 32; i++) {
 }
 
 for (i = 0; i < 256; i++) {
-    var buf = [];
+    var buf = new Uint8Array(i);
     for (j = 0; j < i; j++) {
-        buf.push(j & 0xff);
+        buf[j] = j & 0xff;
     }
     var h = new BLAKE2s(32, key);
     h.update(buf);
@@ -591,9 +591,9 @@ if (fails == 0) {
 // Benchmark.
 (function() {
   var i;
-  var buf = [];
+  var buf = new Uint8Array(1024);
   for (i = 0; i < 1024; i++) {
-    buf.push(i & 0xff);
+    buf[i] = i & 0xff;
   }
   var h = new BLAKE2s(32);
   var startTime = new Date();
