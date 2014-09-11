@@ -1251,15 +1251,12 @@ var BLAKE2s = (function() {
       throw new Error('update() after calling digest()');
 
     if (typeof offset === 'undefined') { offset = 0; }
-    if (typeof length === 'undefined') { length = p.length; }
+    if (typeof length === 'undefined') { length = p.length - offset; }
 
-    var i;
+    if (length === 0) return;
 
-    if (length === 0) {
-      return;
-    }
 
-    var left = 64 - this.nx;
+    var i, left = 64 - this.nx;
 
     // Finish buffer.
     if (length > left) {
@@ -1326,6 +1323,9 @@ var BLAKE2s = (function() {
     }
     return out.join('');
   };
+
+  BLAKE2s.digestLength = MAX_DIGEST_LENGTH;
+  BLAKE2s.blockLength = BLOCK_LENGTH;
 
   return BLAKE2s;
 
