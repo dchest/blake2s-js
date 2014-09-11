@@ -1,5 +1,5 @@
 // Run: node test.js
-var BLAKE2s = typeof require !== 'undefined' ? require('./blake2s.js') : window.BLAKE2s;
+var BLAKE2s = typeof require !== 'undefined' ? require('../blake2s.js') : window.BLAKE2s;
 
 var golden = [
 	"69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9",
@@ -575,7 +575,7 @@ for (i = 2; i < 128; i++) {
   var cand = h1.hexDigest();
 
   if (good != cand) {
-    console.log('fail #', i, '\n', 'have', cand, '\n', 'need', good);
+    console.error('fail #', i, '\n', 'have', cand, '\n', 'need', good);
     fails++;
   } else {
     passes++;
@@ -585,7 +585,8 @@ for (i = 2; i < 128; i++) {
 if (fails == 0) {
     console.log('PASS');
 } else {
-    console.log('FAIL', fails, 'of', fails+passes);
+    console.error('FAIL', fails, 'of', fails+passes);
+    if (typeof process !== 'undefined') process.exit(1);
 }
 
 // Benchmark.
