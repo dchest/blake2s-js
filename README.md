@@ -71,7 +71,7 @@ Example
 var h = new BLAKE2s(32);
 h.update(new Uint8Array([1,2,3]));
 h.hexDigest();  // returns string with hex digest
-h.digest();     // returns array of bytes
+h.digest();     // returns Uint8Array
 
 // Keyed:
 var key = new Uint8Array(32);
