@@ -9,13 +9,13 @@ var BLAKE2s = (function() {
   ]);
 
   function BLAKE2s(digestLength, key) {
-    this.digestLength = digestLength || MAX_DIGEST_LENGTH;
+    if (typeof digestLength === 'undefined')
+      digestLength = MAX_DIGEST_LENGTH;
 
-    if (this.digestLength <= 0) {
-      digestLength = this.digestLength;
-    } else if (this.digestLength > 32) {
-      throw new Error('digestLength is too large');
-    }
+    if (digestLength <= 0 || digestLength > MAX_DIGEST_LENGTH)
+      throw new Error('bad digestLength');
+
+    this.digestLength = digestLength;
 
     if (typeof key === 'string')
       throw new TypeError('key must be a Uint8Array or an Array of bytes');

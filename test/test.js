@@ -582,6 +582,31 @@ for (i = 2; i < 128; i++) {
   }
 }
 
+// exceptions
+try {
+  h0 = new BLAKE2s(0);
+  console.log('did not throw for digestLength = 0');
+  fails++;
+} catch(e) {
+  passes++;
+}
+
+try {
+  h0 = new BLAKE2s(33);
+  console.log('did not throw for digestLength = 33');
+  fails++;
+} catch(e) {
+  passes++;
+}
+
+try {
+  h0 = new BLAKE2s(16, 'string');
+  console.log('did not throw for string key');
+  fails++;
+} catch(e) {
+  passes++;
+}
+
 if (fails == 0) {
     console.log('PASS');
 } else {

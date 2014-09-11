@@ -1,6 +1,6 @@
 {
   "name": "blake2s-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Pure JavaScript implementation of BLAKE2s cryptographic hash function.",
   "main": "blake2s.js",
   "scripts": {
