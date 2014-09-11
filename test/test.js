@@ -631,11 +631,11 @@ if (fails == 0) {
   }
   var h = new BLAKE2s(32);
   var startTime = new Date();
-  for (i = 0; i < 1024; i++) {
+  for (i = 0; i < 80*1024; i++) {
     h.update(buf);
   }
   var duration = (new Date()) - startTime;
-  console.log('BLAKE2s\t', duration +  ' ms\t|\t', 1/(duration/1000) + ' MB/s');
+  console.log('BLAKE2s\t', duration +  ' ms\t|\t', 80/(duration/1000) + ' MB/s');
 })();
 
 (function() {
