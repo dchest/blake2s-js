@@ -54,14 +54,19 @@ throw error. Repeat calls of `digest()` will return the same digest.
 Like `digest()`, but returns a hex-encoded string.
 
 
-### BLAKE2s.digestLength = 32
+#### BLAKE2s.digestLength = 32
 
 Maximum digest length.
 
 
-### BLAKE2s.blockLength = 64
+#### BLAKE2s.blockLength = 64
 
 Block size of the hash function.
+
+
+#### BLAKE2s.keyLength = 32
+
+Maximum key length.
 
 
 Example

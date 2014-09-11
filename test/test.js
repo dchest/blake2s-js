@@ -607,6 +607,14 @@ try {
   passes++;
 }
 
+try {
+  h0 = new BLAKE2s(16, new Uint8Array(BLAKE2b.keyLength+1));
+  console.log('did not throw for key.length = 33');
+  fails++;
+} catch(e) {
+  passes++;
+}
+
 if (fails == 0) {
     console.log('PASS');
 } else {

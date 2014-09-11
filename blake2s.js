@@ -2,6 +2,7 @@ var BLAKE2s = (function() {
 
   var MAX_DIGEST_LENGTH = 32;
   var BLOCK_LENGTH = 64;
+  var MAX_KEY_LENGTH = 32;
 
   var IV = new Uint32Array([
     0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
@@ -21,7 +22,7 @@ var BLAKE2s = (function() {
       throw new TypeError('key must be a Uint8Array or an Array of bytes');
 
     var keyLength = key ? key.length : 0;
-    if (keyLength > 32) throw new Error('key is too long');
+    if (keyLength > MAX_KEY_LENGTH) throw new Error('key is too long');
 
     this.isFinished = false;
 
@@ -1326,6 +1327,7 @@ var BLAKE2s = (function() {
 
   BLAKE2s.digestLength = MAX_DIGEST_LENGTH;
   BLAKE2s.blockLength = BLOCK_LENGTH;
+  BLAKE2s.keyLength = MAX_KEY_LENGTH;
 
   return BLAKE2s;
 
