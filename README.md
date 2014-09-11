@@ -3,8 +3,8 @@ BLAKE2s implementation in JavaScript
 
 BLAKE2 is a fast and secure cryptographic hash function.
 
-This is a pure JavaScript implementation of its 32-bit variant,
-BLAKE2s (currently without tree mode support).
+This is a pure JavaScript implementation of its BLAKE2s flavor
+(currently without tree mode support).
 
 * [BLAKE2s-js Demo](https://dchest.github.io/blake2s-js/)
 * [BLAKE2 Website](https://blake2.net)
