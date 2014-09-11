@@ -1,0 +1,31 @@
+{
+  "name": "blake2s-js",
+  "version": "1.0.0",
+  "description": "Pure JavaScript implementation of BLAKE2s cryptographic hash function.",
+  "main": "blake2s.js",
+  "scripts": {
+    "build": "uglifyjs blake2s.js -c -m -o blake2s.min.js",
+    "test": "node test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dchest/blake2s-js"
+  },
+  "keywords": [
+    "blake2",
+    "blake2s",
+    "blake",
+    "hash",
+    "crypto",
+    "cryptographic"
+  ],
+  "author": "Dmitry Chestnykh",
+  "license": "Public domain",
+  "bugs": {
+    "url": "https://github.com/dchest/blake2s-js/issues"
+  },
+  "devDependencies": {
+    "uglify-js": "2.x.x"
+  },
+  "homepage": "https://github.com/dchest/blake2s-js"
+}

@@ -1,5 +1,5 @@
 // Run: node test.js
-var BLAKE2s = typeof require !== 'undefined' ? require('./blake2s.js') : window.BLAKE2s;
+var BLAKE2s = typeof require !== 'undefined' ? require('../blake2s.js') : window.BLAKE2s;
 
 var golden = [
 	"69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9",
@@ -546,9 +546,9 @@ for (i = 0; i < 32; i++) {
 }
 
 for (i = 0; i < 256; i++) {
-    var buf = [];
+    var buf = new Uint8Array(i);
     for (j = 0; j < i; j++) {
-        buf.push(j & 0xff);
+        buf[j] = j & 0xff;
     }
     var h = new BLAKE2s(32, key);
     h.update(buf);
@@ -575,7 +575,7 @@ for (i = 2; i < 128; i++) {
   var cand = h1.hexDigest();
 
   if (good != cand) {
-    console.log('fail #', i, '\n', 'have', cand, '\n', 'need', good);
+    console.error('fail #', i, '\n', 'have', cand, '\n', 'need', good);
     fails++;
   } else {
     passes++;
@@ -585,15 +585,16 @@ for (i = 2; i < 128; i++) {
 if (fails == 0) {
     console.log('PASS');
 } else {
-    console.log('FAIL', fails, 'of', fails+passes);
+    console.error('FAIL', fails, 'of', fails+passes);
+    if (typeof process !== 'undefined') process.exit(1);
 }
 
 // Benchmark.
 (function() {
   var i;
-  var buf = [];
+  var buf = new Uint8Array(1024);
   for (i = 0; i < 1024; i++) {
-    buf.push(i & 0xff);
+    buf[i] = i & 0xff;
   }
   var h = new BLAKE2s(32);
   var startTime = new Date();

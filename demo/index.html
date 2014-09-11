@@ -32,18 +32,23 @@
     <p><a href="https://github.com/dchest/blake2s-js">Source code</a>
 
     <script>
+      function decodeUTF8(s) {
+        var i, d = unescape(encodeURIComponent(s)), b = new Uint8Array(d.length);
+        for (i = 0; i < d.length; i++) b[i] = d.charCodeAt(i);
+        return b;
+      }
+
       function calculateDigest() {
-        var msg = document.getElementById('input').value;
-        var length = document.getElementById('digest-length').value;
+        // Get message converting to Unix line breaks.
+        var msg = document.getElementById('input').value.replace(/\r\n/g, '\n');
         var key = document.getElementById('key').value;
-        // Unix line breaks.
-        msg = msg.replace(/\r\n/g, '\n');
+        var length = document.getElementById('digest-length').value;
         try {
-          var h = new BLAKE2s(length, key);
+          var h = new BLAKE2s(length, decodeUTF8(key));
         } catch (e) {
           alert("Error: " + e);
         }
-        h.update(msg);
+        h.update(decodeUTF8(msg));
         document.getElementById('digest').innerHTML = h.hexDigest();
       }
     </script>
