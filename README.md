@@ -3,10 +3,10 @@ BLAKE2s implementation in JavaScript
 
 BLAKE2 is a fast and secure cryptographic hash function.
 
-This is a pure JavaScript implementation of its 32-bit variant,
-BLAKE2s (currently without tree mode support).
+This is a pure JavaScript implementation of its BLAKE2s flavor
+(currently without tree mode support).
 
-* [BLAKE2s-js Demo](http://www.dchest.org/blake2s-js/)
+* [BLAKE2s-js Demo](https://dchest.github.io/blake2s-js/)
 * [BLAKE2 Website](https://blake2.net)
 
 [![Build Status](https://travis-ci.org/dchest/blake2s-js.svg?branch=master)
@@ -54,14 +54,19 @@ throw error. Repeat calls of `digest()` will return the same digest.
 Like `digest()`, but returns a hex-encoded string.
 
 
-### BLAKE2s.digestLength = 32
+#### BLAKE2s.digestLength = 32
 
 Maximum digest length.
 
 
-### BLAKE2s.blockLength = 64
+#### BLAKE2s.blockLength = 64
 
 Block size of the hash function.
+
+
+#### BLAKE2s.keyLength = 32
+
+Maximum key length.
 
 
 Example

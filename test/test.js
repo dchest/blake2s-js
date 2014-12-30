@@ -582,6 +582,39 @@ for (i = 2; i < 128; i++) {
   }
 }
 
+// exceptions
+try {
+  h0 = new BLAKE2s(0);
+  console.log('did not throw for digestLength = 0');
+  fails++;
+} catch(e) {
+  passes++;
+}
+
+try {
+  h0 = new BLAKE2s(33);
+  console.log('did not throw for digestLength = 33');
+  fails++;
+} catch(e) {
+  passes++;
+}
+
+try {
+  h0 = new BLAKE2s(16, 'string');
+  console.log('did not throw for string key');
+  fails++;
+} catch(e) {
+  passes++;
+}
+
+try {
+  h0 = new BLAKE2s(16, new Uint8Array(BLAKE2b.keyLength+1));
+  console.log('did not throw for key.length = 33');
+  fails++;
+} catch(e) {
+  passes++;
+}
+
 if (fails == 0) {
     console.log('PASS');
 } else {
@@ -598,11 +631,11 @@ if (fails == 0) {
   }
   var h = new BLAKE2s(32);
   var startTime = new Date();
-  for (i = 0; i < 1024; i++) {
+  for (i = 0; i < 80*1024; i++) {
     h.update(buf);
   }
   var duration = (new Date()) - startTime;
-  console.log('BLAKE2s\t', duration +  ' ms\t|\t', 1/(duration/1000) + ' MB/s');
+  console.log('BLAKE2s\t', duration +  ' ms\t|\t', 80/(duration/1000) + ' MB/s');
 })();
 
 (function() {
