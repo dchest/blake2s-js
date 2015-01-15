@@ -1,3 +1,4 @@
+"use strict";
 var BLAKE2s = (function() {
 
   var MAX_DIGEST_LENGTH = 32;
@@ -1245,9 +1246,18 @@ var BLAKE2s = (function() {
     this.h[7] ^= v7 ^ v15;
   };
 
-  BLAKE2s.prototype.update = function(p, offset, length) {
+  BLAKE2s.prototype.update = function(p1, offset, length) {
+    var p=p1;
     if (typeof p === 'string')
-      throw new TypeError('update() accepts Uint8Array or an Array of bytes');
+      p=p.split("").map(function(a){return a.charCodeAt();});
+    if ( p instanceof Array)
+      p=new Uint8Array(p);
+    if ( typeof p.buffer !== 'undefined' && p.buffer instanceof ArrayBuffer){
+      p=p.buffer;
+    }
+    if ( p instanceof ArrayBuffer)
+      p=new Uint8Array(p);
+  
     if (this.isFinished)
       throw new Error('update() after calling digest()');
 
