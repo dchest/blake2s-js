@@ -12,6 +12,8 @@ This is a pure JavaScript implementation of its BLAKE2s flavor
 [![Build Status](https://travis-ci.org/dchest/blake2s-js.svg?branch=master)
 ](https://travis-ci.org/dchest/blake2s-js)
 
+*Looking for BLAKE2b implementation? Check out:
+<https://github.com/dcposch/blakejs>*
 
 Installation
 ------------
