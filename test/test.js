@@ -519,6 +519,41 @@ var goldenKeyed = [
 	"3fb735061abc519dfe979e54c1ee5bfad0a9d858b3315bad34bde999efd724dd",
 ];
 
+var goldenLength = [
+    null, // skip 0 length
+    "b6",
+    "abd0",
+    "2d967b",
+    "db9a6dcd",
+    "33c127566d",
+    "137a9100d761",
+    "8c56f492dd6615",
+    "79aa99537dcf3f54",
+    "b8f0e45da7f4b412d2",
+    "5978da4e301f82738b6c",
+    "b74fee1c8e99ada17a663b",
+    "52404af9ef84e79526e51225",
+    "6b6716af04bc67b8397ab702d1",
+    "98a82efcfb0c7bbce9d3ceec442c",
+    "f406b17af48e9f450a1de31bd5aac8",
+    "dc6772000e3e9567bcfbc92971d67816",
+    "dcde40f1b248ef9329eda4a744b444b9c1",
+    "8069295420a358221dd05b89e02e5973e6dd",
+    "59deea9e58b757932c49db2468da6107582590",
+    "985ed9932a7529791cc7535ad0fbabc3be4ef1f3",
+    "dfb4b91f8142e1bd02ae2eb1c8cab22eadec2faa32",
+    "dd88759ef5507175e10b12f5bf8d41338d9054e9060d",
+    "0ddebc4adbd5bcb205b472bc4313cee6cca6ae4b409201",
+    "12a70aa3eb7a0bb3a95c1e5b0d0fec2d4c17cc1a98fe51b8",
+    "6659c6bb808cd83478ecb97b991e5b769ace3b078032df4505",
+    "66094717364c1740b2d683e2d7b2b544e0e2e1e1a72b1e78c54f",
+    "0279c36a090f3fefb70033064ca47d69e598ae333e06b8463f8e42",
+    "9f7194d71d515ebc1e15ddb382d218fb35d91485f7967d9961ccedcc",
+    "77cbf65659c22477bc6c9750c56a011ecbd9eab40f027a99dd2e7e87f5",
+    "8126ee52ed204f8b9bf321705b52b1be2f6aa53cf43aa8e34d52ae566288",
+    "6949d2417e058201aef8598f2dfb70ca21db7655f5eea7d02108c6274e36ad",
+];
+
 var i, j, passes = 0, fails = 0;
 
 // golden
@@ -554,6 +589,24 @@ for (i = 0; i < 256; i++) {
     h.update(buf);
     if (h.hexDigest() != goldenKeyed[i]) {
         console.log('fail #', i, '\n', 'have', h.hexDigest(), '\n', 'need', goldenKeyed[i]);
+        fails++;
+    } else {
+        passes++;
+    }
+}
+
+// goldenLength
+console.log("Testing digest lengths...");
+var buf = new Uint8Array(32);
+for (i = 1; i < 32; i++) {
+    buf[i] = i & 0xff;
+    var h = new BLAKE2s(i);
+    h.update(buf.subarray(0, i));
+    var hexDigest = h.hexDigest();
+    if (hexDigest != goldenLength[i]) {
+        console.log('fail #', i, '\n', 'have', h.hexDigest(), ' (' +
+            hexDigest.length / 2 +' bytes)\n', 'need', goldenLength[i] + ' (' +
+            goldenLength[i].length / 2 + ' bytes)');
         fails++;
     } else {
         passes++;
