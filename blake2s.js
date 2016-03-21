@@ -1254,7 +1254,7 @@ var BLAKE2s = (function() {
     if (typeof offset === 'undefined') { offset = 0; }
     if (typeof length === 'undefined') { length = p.length - offset; }
 
-    if (length === 0) return;
+    if (length === 0) return this;
 
 
     var i, left = 64 - this.nx;
@@ -1286,6 +1286,8 @@ var BLAKE2s = (function() {
       this.x[this.nx + i] = p[offset + i];
     }
     this.nx += length;
+
+    return this;
   };
 
   BLAKE2s.prototype.digest = function() {
