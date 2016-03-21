@@ -39,11 +39,15 @@ Creates a new instance of BLAKE2s hash with the given length of digest (default
 and maximum 32) and an optional secret key (a `Uint8Array` or `Array` of
 bytes).
 
+
 #### .update(data[, offset, length])
 
 Updates the hash with data (a `Uint8Array` or `Array` of bytes).  starting at
 the given `offset` (optional, defaults to 0) and consuming the given `length`
 (optional, defaults to the length of `data` minus `offset`).
+
+Returns this instance to enable method chaining.
+
 
 #### .digest()
 
