@@ -47,7 +47,7 @@ var BLAKE2s = (function() {
     this.digestLength = digestLength;
 
     var key, personalization, salt;
-    var keyLength = 0, personLength = 0, saltLength = 0;
+    var keyLength = 0;
 
     if (isByteArray(keyOrConfig)) {
       key = keyOrConfig;
