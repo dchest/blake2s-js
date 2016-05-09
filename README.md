@@ -34,10 +34,19 @@ Usage
 -----
 
 ### new BLAKE2s(digestLength, key)
+### new BLAKE2s(digestLength, config)
 
 Creates a new instance of BLAKE2s hash with the given length of digest (default
 and maximum 32) and an optional secret key (a `Uint8Array` or `Array` of
-bytes).
+bytes) or config object in the following format:
+
+    {
+        salt: // 8-byte Uint8Array or Array of bytes
+        personalization: // 8-byte Uint8Array or Array of bytes
+        key: // 0-32-byte Uint8Array or Array of bytes
+    }
+
+All keys in config are optional.
 
 
 #### .update(data[, offset, length])
@@ -85,10 +94,31 @@ h.hexDigest();  // returns string with hex digest
 h.digest();     // returns Uint8Array
 
 // Keyed:
-var key = new Uint8Array(32);
+var key = new Uint8Array(BLAKE2s.keyLength);
 window.crypto.getRandomValues(key);
 var h = new BLAKE2s(32, key);
 ...
+
+// Keyed and salted:
+var key = new Uint8Array(BLAKE2s.keyLength);
+var salt = new Uint8Array(BLAKE2s.saltLength);
+window.crypto.getRandomValues(key);
+window.crypto.getRandomValues(salt);
+var h = new BLAKE2s(32, { key: key, salt: salt });
+...
+
+// Personalized:
+var data = new Uint8Array([1, 2, 3]);
+var pers1 = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0]);
+var h1 = new BLAKE2s(32, { personalization: pers1 });
+h1.update(data);
+
+var pers2 = new Uint8Array([2, 0, 0, 0, 0, 0, 0, 0]);
+var h2 = new BLAKE2s(32, { personalization: pers2 });
+h2.update(data);
+
+h1.hexDigest() !== h2.hexDigest() // true
+
 ```
 
 

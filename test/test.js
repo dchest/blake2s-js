@@ -635,6 +635,37 @@ for (i = 2; i < 128; i++) {
   }
 }
 
+// salting and personalization
+var salt = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
+var person = new Uint8Array([9, 10, 11, 12, 13, 14, 15, 16]);
+var input = new Uint8Array([255, 254, 253, 252, 251, 250]);
+
+console.log("Testing salting and personalization");
+var h = new BLAKE2s(18, { salt: salt, personalization: person });
+h.update(input);
+var have = h.hexDigest();
+var good = '23f1cae542785205164e8356d1f622038679';
+if (good !== have) {
+  console.error('fail: have', have, '\n', 'need', good);
+  fails++;
+} else {
+  passes++;
+}
+
+console.log("Testing salting and personalization with key");
+var key = new Uint8Array(32);
+for (var i = 0; i < key.length; i++) key[i] = i;
+var h = new BLAKE2s(32, { salt: salt, personalization: person, key: key });
+h.update(input);
+var have = h.hexDigest();
+var good = 'ed1b7315f06e4ac734dc4fc23d3dfb1a86dda2cdb2fffd5893ee3796495231b6';
+if (good !== have) {
+  console.error('fail: have', have, '\n', 'need', good);
+  fails++;
+} else {
+  passes++;
+}
+
 // exceptions
 try {
   h0 = new BLAKE2s(0);

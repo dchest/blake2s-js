@@ -3,13 +3,41 @@ var BLAKE2s = (function() {
   var MAX_DIGEST_LENGTH = 32;
   var BLOCK_LENGTH = 64;
   var MAX_KEY_LENGTH = 32;
+  var PERSONALIZATION_LENGTH = 8;
+  var SALT_LENGTH = 8;
 
   var IV = new Uint32Array([
     0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
     0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
   ]);
 
-  function BLAKE2s(digestLength, key) {
+  function isByteArray(a) {
+    var kind = Object.prototype.toString.call(a);
+    return kind === '[object Uint8Array]' || kind === '[object Array]';
+  }
+
+  function checkConfig(config) {
+    for (var key in config) {
+      switch (key) {
+      case 'key':
+      case 'personalization':
+      case 'salt':
+        if (!isByteArray) {
+          throw new TypeError(key + ' must be a Uint8Array or an Array of bytes');
+        }
+        break;
+      default:
+        throw new Error('unexpected key in config: ' + key)
+      }
+    }
+  }
+
+  function load32(a, i) {
+    return (a[i + 0] & 0xff) | ((a[i + 1] & 0xff) << 8) |
+           ((a[i + 2] & 0xff) << 16) | ((a[i + 3] & 0xff) << 24);
+  }
+
+  function BLAKE2s(digestLength, keyOrConfig) {
     if (typeof digestLength === 'undefined')
       digestLength = MAX_DIGEST_LENGTH;
 
@@ -18,20 +46,49 @@ var BLAKE2s = (function() {
 
     this.digestLength = digestLength;
 
-    if (typeof key === 'string')
-      throw new TypeError('key must be a Uint8Array or an Array of bytes');
+    var key, personalization, salt;
+    var keyLength = 0, personLength = 0, saltLength = 0;
 
-    var keyLength = key ? key.length : 0;
-    if (keyLength > MAX_KEY_LENGTH) throw new Error('key is too long');
+    if (isByteArray(keyOrConfig)) {
+      key = keyOrConfig;
+      keyLength = key.length;
+    } else if (typeof keyOrConfig === 'object') {
+      checkConfig(keyOrConfig);
+
+      key = keyOrConfig.key;
+      keyLength = key ? key.length : 0;
+
+      salt = keyOrConfig.salt;
+      personalization = keyOrConfig.personalization;
+    } else if (keyOrConfig) {
+      throw new Error('unexpected key or config type');
+    }
+
+    if (keyLength > MAX_KEY_LENGTH)
+      throw new Error('key is too long');
+    if (salt && salt.length !== SALT_LENGTH)
+      throw new Error('salt must be ' + SALT_LENGTH + ' bytes');
+    if (personalization && personalization.length !== PERSONALIZATION_LENGTH)
+      throw new Error('personalization must be ' + PERSONALIZATION_LENGTH + ' bytes');
 
     this.isFinished = false;
 
     // Hash state.
     this.h = new Uint32Array(IV);
 
-    // XOR part of parameter block.
-    var param = [digestLength & 0xff, keyLength, 1, 1];
-    this.h[0] ^= param[0] & 0xff | (param[1] & 0xff) << 8 | (param[2] & 0xff) << 16 | (param[3] & 0xff) << 24;
+    // XOR parts of parameter block into initial state.
+    var param = new Uint8Array([digestLength & 0xff, keyLength, 1, 1]);
+    this.h[0] ^= load32(param, 0);
+
+    if (salt) {
+      this.h[4] ^= load32(salt, 0);
+      this.h[5] ^= load32(salt, 4);
+    }
+
+    if (personalization) {
+      this.h[6] ^= load32(personalization, 0);
+      this.h[7] ^= load32(personalization, 4);
+    }
 
     // Buffer for data.
     this.x = new Uint8Array(BLOCK_LENGTH);
@@ -1330,6 +1387,8 @@ var BLAKE2s = (function() {
   BLAKE2s.digestLength = MAX_DIGEST_LENGTH;
   BLAKE2s.blockLength = BLOCK_LENGTH;
   BLAKE2s.keyLength = MAX_KEY_LENGTH;
+  BLAKE2s.saltLength = SALT_LENGTH;
+  BLAKE2s.personalizationLength = PERSONALIZATION_LENGTH;
 
   return BLAKE2s;
 
