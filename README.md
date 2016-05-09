@@ -83,6 +83,14 @@ Block size of the hash function.
 
 Maximum key length.
 
+#### BLAKE2s.personalizationLength = 8
+
+Length of personalization parameter.
+
+#### BLAKE2s.saltLength = 8
+
+Length of salt parameter.
+
 
 Example
 -------
