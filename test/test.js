@@ -640,6 +640,20 @@ var salt = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
 var person = new Uint8Array([9, 10, 11, 12, 13, 14, 15, 16]);
 var input = new Uint8Array([255, 254, 253, 252, 251, 250]);
 
+console.log("Testing config validation");
+var invalid = false;
+try {
+	var h = new BLAKE2s(32, { key: "not Uint8Array" });
+} catch(e) {
+	invalid = true;
+}
+if (!invalid) {
+	console.error('fail: invalid config passed validation');
+	fails++;
+} else {
+	passes++;
+}
+
 console.log("Testing salting and personalization");
 var h = new BLAKE2s(18, { salt: salt, personalization: person });
 h.update(input);

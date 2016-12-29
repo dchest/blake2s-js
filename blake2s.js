@@ -22,7 +22,7 @@ var BLAKE2s = (function() {
       case 'key':
       case 'personalization':
       case 'salt':
-        if (!isByteArray) {
+        if (!isByteArray(config[key])) {
           throw new TypeError(key + ' must be a Uint8Array or an Array of bytes');
         }
         break;
