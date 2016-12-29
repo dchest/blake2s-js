@@ -1,3 +1,4 @@
+/* Written in 2012-2014 by Dmitry Chestnykh. Public domain */
 var BLAKE2s = (function() {
 
   var MAX_DIGEST_LENGTH = 32;

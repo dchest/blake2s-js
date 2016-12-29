@@ -3,7 +3,7 @@ BLAKE2s implementation in JavaScript
 
 BLAKE2 is a fast and secure cryptographic hash function.
 
-This is a pure JavaScript implementation of its BLAKE2s flavor
+This is a pure JavaScript public domain implementation of its BLAKE2s flavor
 (currently without tree mode support).
 
 * [BLAKE2s-js Demo](https://dchest.github.io/blake2s-js/)
@@ -128,15 +128,3 @@ h2.update(data);
 h1.hexDigest() !== h2.hexDigest() // true
 
 ```
-
-
-
-Public domain dedication
-------------------------
-
-Written in 2012-2014 by Dmitry Chestnykh.
-
-To the extent possible under law, the author have dedicated all copyright
-and related and neighboring rights to this software to the public domain
-worldwide. This software is distributed without any warranty.
-<http://creativecommons.org/publicdomain/zero/1.0/>
