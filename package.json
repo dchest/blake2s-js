@@ -25,7 +25,7 @@
     "url": "https://github.com/dchest/blake2s-js/issues"
   },
   "devDependencies": {
-    "uglify-js": "2.x.x"
+    "uglify-js": "^3.2.1"
   },
   "homepage": "https://github.com/dchest/blake2s-js"
 }
