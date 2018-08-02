@@ -3,6 +3,7 @@
   "version": "1.2.3",
   "description": "Pure JavaScript implementation of BLAKE2s cryptographic hash function.",
   "main": "blake2s.js",
+  "types": "blake2s.d.ts",
   "scripts": {
     "build": "uglifyjs blake2s.js -c -m -o blake2s.min.js",
     "test": "node test/test.js"
