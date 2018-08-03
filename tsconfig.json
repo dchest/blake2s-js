@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+  },
+  "files": [
+    "blake2s.d.ts",
+    "test/test.js"
+  ]
+}

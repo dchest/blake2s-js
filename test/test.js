@@ -1,4 +1,8 @@
 // Run: node test.js
+
+// @ts-check
+/** @type {typeof import('../blake2s').default} */
+// @ts-ignore
 var BLAKE2s = typeof require !== 'undefined' ? require('../blake2s.js') : window.BLAKE2s;
 
 var golden = [
@@ -643,6 +647,7 @@ var input = new Uint8Array([255, 254, 253, 252, 251, 250]);
 console.log("Testing config validation");
 var invalid = false;
 try {
+	// @ts-ignore
 	var h = new BLAKE2s(32, { key: "not Uint8Array" });
 } catch(e) {
 	invalid = true;
@@ -698,6 +703,7 @@ try {
 }
 
 try {
+	// @ts-ignore
   h0 = new BLAKE2s(16, 'string');
   console.log('did not throw for string key');
   fails++;
@@ -706,7 +712,7 @@ try {
 }
 
 try {
-  h0 = new BLAKE2s(16, new Uint8Array(BLAKE2b.keyLength+1));
+  h0 = new BLAKE2s(16, new Uint8Array(BLAKE2s.keyLength+1));
   console.log('did not throw for key.length = 33');
   fails++;
 } catch(e) {
