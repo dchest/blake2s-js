@@ -746,7 +746,7 @@ if (fails == 0) {
   if (typeof require === 'undefined') return;
   var crypto = require('crypto');
   var i;
-  var buf = new Buffer(1024);
+  var buf = Buffer.alloc(1024);
   for (i = 0; i < 1024; i++) {
     buf[i] = (i & 0xff);
   }
