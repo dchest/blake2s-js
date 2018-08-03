@@ -22,11 +22,6 @@ Via NPM:
 
     $ npm install blake2s-js
 
-Via Bower:
-
-    $ bower install blake2s-js
-
-
 or just download `blake2s.min.js`.
 
 
