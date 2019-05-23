@@ -28,7 +28,7 @@ var BLAKE2s = (function() {
         }
         break;
       default:
-        throw new Error('unexpected key in config: ' + key)
+        throw new Error('unexpected key in config: ' + key);
       }
     }
   }
