@@ -27,6 +27,7 @@ export interface BLAKE2sConfig {
   personalization?: ByteArray;
   salt?: ByteArray;
   maxLeafLength?: number;
+  innerHashLength?: number;
   fanOut?: number;
   maxDepth?: number;
   nodeOffset?: number;

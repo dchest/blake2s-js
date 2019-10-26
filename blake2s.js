@@ -47,7 +47,7 @@ var BLAKE2s = (function() {
 
     this.digestLength = digestLength;
 
-    var key, personalization, salt, maxLeafLength, fanOut, maxDepth, nodeOffset, xofDigestLength;
+    var key, personalization, salt, maxLeafLength, innerHashLength, fanOut, maxDepth, nodeOffset, xofDigestLength;
     var keyLength = 0;
 
     if (isByteArray(keyOrConfig)) {
@@ -62,6 +62,7 @@ var BLAKE2s = (function() {
       salt = keyOrConfig.salt;
       personalization = keyOrConfig.personalization;
       maxLeafLength = keyOrConfig.maxLeafLength;
+      innerHashLength = keyOrConfig.innerHashLength;
       fanOut = keyOrConfig.fanOut;
       maxDepth = keyOrConfig.maxDepth;
       nodeOffset = keyOrConfig.nodeOffset;
@@ -82,7 +83,7 @@ var BLAKE2s = (function() {
     this.h = new Uint32Array(IV);
 
     // XOR parts of parameter block into initial state.
-    var param = new Uint8Array([digestLength & 0xff, keyLength, 1, 1]);
+    var param = new Uint8Array([digestLength & 0xff, keyLength, 0, 0]);
     this.h[0] ^= load32(param, 0);
 
     if (salt) {
@@ -95,23 +96,31 @@ var BLAKE2s = (function() {
       this.h[7] ^= load32(personalization, 4);
     }
 
-    if (maxLeafLength) {
+    if (maxLeafLength !== undefined) {
       this.h[1] ^= maxLeafLength;
     }
 
-    if (fanOut) {
+    if (innerHashLength !== undefined) {
+      this.h[3] ^= (innerHashLength << 24);
+    }
+
+    if (fanOut !== undefined) {
       this.h[0] ^= (fanOut << 16);
+    } else {
+      this.h[0] ^= (1 << 16);
     }
 
-    if (maxDepth) {
+    if (maxDepth !== undefined) {
       this.h[0] ^= (maxDepth << 24);
+    } else {
+      this.h[0] ^= (1 << 24);
     }
 
-    if (nodeOffset) {
+    if (nodeOffset !== undefined) {
       this.h[2] ^= nodeOffset;
     }
 
-    if (xofDigestLength) {
+    if (xofDigestLength !== undefined) {
       this.h[3] ^= xofDigestLength;
     }
 
