@@ -27,6 +27,13 @@ var BLAKE2s = (function() {
           throw new TypeError(key + ' must be a Uint8Array or an Array of bytes');
         }
         break;
+      case 'maxLeafLength':
+      case 'innerHashLength':
+      case 'fanOut':
+      case 'maxDepth':
+      case 'nodeOffset':
+      case 'xofDigestLength':
+          break;
       default:
         throw new Error('unexpected key in config: ' + key)
       }
