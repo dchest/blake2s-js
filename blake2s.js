@@ -47,7 +47,7 @@ var BLAKE2s = (function() {
 
     this.digestLength = digestLength;
 
-    var key, personalization, salt;
+    var key, personalization, salt, maxLeafLength, fanOut, maxDepth, nodeOffset, xofDigestLength;
     var keyLength = 0;
 
     if (isByteArray(keyOrConfig)) {
@@ -61,6 +61,10 @@ var BLAKE2s = (function() {
 
       salt = keyOrConfig.salt;
       personalization = keyOrConfig.personalization;
+      maxLeafLength = keyOrConfig.maxLeafLength;
+      fanOut = keyOrConfig.fanOut;
+      maxDepth = keyOrConfig.maxDepth;
+      nodeOffset = keyOrConfig.nodeOffset;
     } else if (keyOrConfig) {
       throw new Error('unexpected key or config type');
     }
@@ -89,6 +93,26 @@ var BLAKE2s = (function() {
     if (personalization) {
       this.h[6] ^= load32(personalization, 0);
       this.h[7] ^= load32(personalization, 4);
+    }
+
+    if (maxLeafLength) {
+      this.h[1] ^= maxLeafLength;
+    }
+
+    if (fanOut) {
+      this.h[0] ^= (fanOut << 16);
+    }
+
+    if (maxDepth) {
+      this.h[0] ^= (maxDepth << 24);
+    }
+
+    if (nodeOffset) {
+      this.h[2] ^= nodeOffset;
+    }
+
+    if (xofDigestLength) {
+      this.h[3] ^= xofDigestLength;
     }
 
     // Buffer for data.
