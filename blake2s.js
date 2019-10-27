@@ -73,6 +73,7 @@ var BLAKE2s = (function() {
       fanOut = keyOrConfig.fanOut;
       maxDepth = keyOrConfig.maxDepth;
       nodeOffset = keyOrConfig.nodeOffset;
+      xofDigestLength = keyOrConfig.xofDigestLength;
     } else if (keyOrConfig) {
       throw new Error('unexpected key or config type');
     }
