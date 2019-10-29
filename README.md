@@ -12,7 +12,7 @@ This is a pure JavaScript public domain implementation of its BLAKE2s flavor
 [![Build Status](https://travis-ci.org/dchest/blake2s-js.svg?branch=master)
 ](https://travis-ci.org/dchest/blake2s-js)
 
-*Looking for BLAKE2b implementation? Check out [@stablelib/blake2b](https://github.com/StableLib/stablelib).*
+**This implementation is maintained, but will not receive new features. If you're looking for a full implementation of BLAKE2s, BLAKE2Xs and BLAKE2b, see my packages from [StableLib](https://github.com/StableLib/stablelib): `@stablelib/blake2s`, `@stablelib/blake2xs`, and `@stablelib/blake2b`.**
 
 Installation
 ------------
